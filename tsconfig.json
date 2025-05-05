@@ -1,0 +1,10 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["packages/*"]
+    }
+  }
+}
