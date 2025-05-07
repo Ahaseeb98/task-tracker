@@ -19,6 +19,8 @@ export class CreateUserDto {
   @IsString()
   referredBy: number;
 
+  avatar: string;
+
   @IsString()
   @IsNotEmpty()
   role: string;
