@@ -1,11 +1,11 @@
 export interface USER_TYPE {
-  id?: number;
+  id: string;
   name?: string;
   email: string;
   password: string;
   address: string;
-  referredBy: number;
+  referredBy: string;
   role: string;
-  createAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }

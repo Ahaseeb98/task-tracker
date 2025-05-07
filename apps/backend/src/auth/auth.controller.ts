@@ -4,10 +4,16 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
+  Get,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, ValidateUserDto } from './dtos/create-users.dto';
 import { FileUploadInterceptor } from 'src/shared/file-upload/file-upload.interceptor';
+import { AuthRequest } from '../../../../packages/Interfaces/auth-request.interface';
+import { AuthGuard } from '@nestjs/passport';
+import { USER_TYPE } from '../../../../packages/Types/USERS';
 
 @Controller('auth')
 export class AuthController {
@@ -29,5 +35,12 @@ export class AuthController {
   @Post('login')
   login(@Body() validateUserDto: ValidateUserDto) {
     return this.authService.login(validateUserDto);
+  }
+
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
+  profile(@Req() req: AuthRequest) {
+    const user = req.user as USER_TYPE;
+    return this.authService.getProfile(user.id);
   }
 }

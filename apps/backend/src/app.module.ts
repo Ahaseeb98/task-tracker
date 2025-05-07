@@ -3,10 +3,19 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { FileUploadModule } from './shared/file-upload/file-upload.module';
-import { join } from 'path';
-console.log(join(__dirname, '..', 'uploads'));
+import { TasksModule } from './tasks/tasks.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 @Module({
-  imports: [AuthModule, FileUploadModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI || ''),
+    AuthModule,
+    FileUploadModule,
+    TasksModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

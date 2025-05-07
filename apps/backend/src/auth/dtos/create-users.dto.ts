@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsIn,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -16,14 +23,14 @@ export class CreateUserDto {
   @IsString()
   address: string;
 
-  @IsString()
-  referredBy: number;
+  @IsOptional()
+  @IsMongoId()
+  referredBy: string;
 
   avatar: string;
 
-  @IsString()
-  @IsNotEmpty()
-  role: string;
+  @IsIn(['employee', 'employer'])
+  role: 'employee' | 'employer';
 }
 
 export class ValidateUserDto {
