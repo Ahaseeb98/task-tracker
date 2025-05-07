@@ -6,10 +6,22 @@ export class CreateUserDto {
   name: string;
 
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsString()
+  @IsNotEmpty()
   password: string;
+
+  @IsString()
+  address: string;
+
+  @IsString()
+  referredBy: number;
+
+  @IsString()
+  @IsNotEmpty()
+  role: string;
 }
 
 export class ValidateUserDto {
