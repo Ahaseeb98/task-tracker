@@ -25,6 +25,19 @@ export class Task {
 
   @Prop({ required: true })
   rewardPrice: string;
+
+  @Prop([
+    {
+      text: String,
+      date: Date,
+      by: { type: Types.ObjectId, ref: 'User' },
+    },
+  ])
+  comments?: {
+    text: string;
+    date: Date;
+    by: Types.ObjectId;
+  }[];
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
