@@ -47,7 +47,7 @@ PORT=3000
 
 Update the mobile app API config:
 
-- Go to the `Contents` folder inside `mobile`
+- Go to the `Constants` folder inside `mobile`
 - Search for `API_BASE_URL`
 - Replace it with your local IP address, e.g.:
 
