@@ -13,7 +13,6 @@ import { CreateUserDto, ValidateUserDto } from './dtos/create-users.dto';
 import { FileUploadInterceptor } from 'src/shared/file-upload/file-upload.interceptor';
 import { AuthRequest } from '../../../../packages/Interfaces/auth-request.interface';
 import { AuthGuard } from '@nestjs/passport';
-import { USER_TYPE } from '../../../../packages/Types/USERS';
 
 @Controller('auth')
 export class AuthController {
@@ -37,10 +36,15 @@ export class AuthController {
     return this.authService.login(validateUserDto);
   }
 
+  @Get('users')
+  users() {
+    return this.authService.getUsers();
+  }
+
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
   profile(@Req() req: AuthRequest) {
-    const user = req.user as USER_TYPE;
+    const user = req.user;
     return this.authService.getProfile(user.id);
   }
 }

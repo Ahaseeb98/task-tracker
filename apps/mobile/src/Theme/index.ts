@@ -4,6 +4,7 @@ export const LightTheme = {
   primary: "#4CAF50",
   primaryText: "#FFFFFF",
   disabled: "#D0EAD7",
+  danger: "red",
 };
 
 export const DarkTheme = {
@@ -12,5 +13,6 @@ export const DarkTheme = {
   primary: "#66BB6A",
   primaryText: "#1B1F23",
   disabled: "#4CAF5033",
+  danger: "red",
 };
 export type AppTheme = typeof LightTheme;

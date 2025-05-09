@@ -1,17 +1,19 @@
 import React from "react";
 import {
   TouchableOpacity,
-  Text,
+  ActivityIndicator,
   StyleSheet,
   ViewStyle,
   TextStyle,
 } from "react-native";
 import { useTheme } from "../../Theme/ThemeProvider";
+import PrimaryText from "../Texts/PrimaryText";
 
 type PrimaryButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
+  loading?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
 };
@@ -20,6 +22,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   title,
   onPress,
   disabled,
+  loading = false,
   style,
   textStyle,
 }) => {
@@ -29,16 +32,23 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     <TouchableOpacity
       style={[
         styles.button,
-        { backgroundColor: disabled ? disabledColor : primary },
+        { backgroundColor: disabled || loading ? disabledColor : primary },
         style,
       ]}
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || loading}
       activeOpacity={0.7}
     >
-      <Text style={[styles.text, { color: primaryText }, textStyle]}>
-        {title}
-      </Text>
+      {loading ? (
+        <ActivityIndicator color={primaryText} />
+      ) : (
+        <PrimaryText
+          style={{ ...styles.text, color: primaryText, ...textStyle }}
+          weight="bold"
+        >
+          {title}
+        </PrimaryText>
+      )}
     </TouchableOpacity>
   );
 };
@@ -55,6 +65,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "bold",
   },
 });

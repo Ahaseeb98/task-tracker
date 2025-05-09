@@ -51,6 +51,10 @@ export class AuthService {
     return this.userModel.findById(userId).select('-password');
   }
 
+  async getUsers() {
+    return this.userModel.find().select('-password');
+  }
+
   private generateToken(user: UserDocument) {
     const payload = {
       id: user._id,

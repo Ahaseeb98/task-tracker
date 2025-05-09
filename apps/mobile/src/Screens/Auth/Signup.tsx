@@ -10,6 +10,7 @@ import { LOGIN_PATH } from "../../Navigation/Paths";
 import { useNavigation } from "@react-navigation/native";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
 import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
+import ImageInput from "../../Components/Forms/Inputs/ImageInput";
 
 const SignupScreen = () => {
   const { text, primary } = useTheme();
@@ -22,7 +23,7 @@ const SignupScreen = () => {
     address: "",
     referredBy: "",
     avatar: "",
-    role: "employee", // default
+    role: "", // default
   });
 
   const handleChange = (field: keyof typeof form, value: string) => {
@@ -84,11 +85,9 @@ const SignupScreen = () => {
           value={form.referredBy}
           onChangeText={(text: string) => handleChange("referredBy", text)}
         />
-        <PrimaryInput
-          style={[styles.input, inputColors]}
-          placeholder="Avatar URL"
-          value={form.avatar}
-          onChangeText={(text: string) => handleChange("avatar", text)}
+        <ImageInput
+          style={[styles.inputIos, inputColors]}
+          onImagePicked={(text: string) => handleChange("avatar", text)}
         />
 
         {Platform.OS === "ios" ? (

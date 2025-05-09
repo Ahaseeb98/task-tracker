@@ -8,19 +8,54 @@ import PrimaryInput from "../../Components/Forms/Inputs/PrimaryInput";
 import TouchableText from "../../Components/Texts/TouchableText";
 import { useNavigation } from "@react-navigation/native";
 import { SIGNUP_PATH } from "../../Navigation/Paths";
+import { validateEmail } from "../../Utils/validate";
+import { login } from "../../Redux/authSlice";
+import { loginRequest } from "../../Api/authService";
+import { useDispatch } from "react-redux";
 
 const LoginScreen = () => {
   const { primary, text } = useTheme();
   const { navigate } = useNavigation();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    console.log("Logging in with:", { email, password });
-    // handle authentication logic here
-  };
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
 
-  const inputColors = { color: text, borderColor: text };
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleLogin = async () => {
+    let valid = true;
+
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email.");
+      valid = false;
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required.");
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Proceed with login
+    console.log("Logging in with:", { email, password });
+    setLoading(true);
+    try {
+      const data = await loginRequest(email, password);
+      dispatch(login(data));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <PrimaryBackground style={styles.container}>
@@ -33,7 +68,10 @@ const LoginScreen = () => {
         placeholderTextColor="#888"
         value={email}
         onChangeText={setEmail}
-        style={[styles.input, inputColors]}
+        error={emailError}
+        style={styles.input}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
 
       <PrimaryInput
@@ -42,22 +80,24 @@ const LoginScreen = () => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={[styles.input, inputColors]}
+        error={passwordError}
+        style={styles.input}
       />
 
-      <PrimaryButton style={styles.input} title="Login" onPress={handleLogin} />
+      <PrimaryButton
+        loading={loading}
+        disabled={loading}
+        style={styles.input}
+        title="Login"
+        onPress={handleLogin}
+      />
 
       <View style={styles.link}>
         <PrimaryText>
           Don't have an account?{" "}
           <TouchableText
             onPress={() => navigate(SIGNUP_PATH as never)}
-            style={[
-              styles.linkText,
-              {
-                color: primary,
-              },
-            ]}
+            style={[styles.linkText, { color: primary }]}
             weight="bold"
           >
             Sign up
@@ -77,7 +117,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: 8,
-    padding: 12,
     marginVertical: 10,
   },
   link: {
