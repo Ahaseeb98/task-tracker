@@ -3,4 +3,5 @@ export interface AUTH_TYPE {
   isAuthenticated: boolean;
   token: string | null;
   user?: USER_TYPE | null;
+  users: USER_TYPE[];
 }

@@ -2,7 +2,7 @@
 export type TaskStatus = "Pending" | "In Progress" | "Completed";
 
 export interface TASK_TYPE {
-  id?: string;
+  _id: string;
   title: string;
   description: string;
   picture?: string;

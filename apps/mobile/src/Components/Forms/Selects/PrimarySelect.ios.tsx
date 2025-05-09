@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useTheme } from "../../../Theme/ThemeProvider";
+import PrimaryText from "../../Texts/PrimaryText";
 
 type CustomPickerProps = {
   selectedValue: string;
@@ -16,6 +17,7 @@ type CustomPickerProps = {
   items: { label: string; value: string }[];
   placeholder?: string;
   style?: any;
+  error?: string;
 };
 
 const CustomPicker: React.FC<CustomPickerProps> = ({
@@ -24,9 +26,10 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   items,
   placeholder,
   style,
+  error,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { text, background } = useTheme();
+  const { text, background, danger } = useTheme();
 
   // Toggle modal visibility
   const toggleModal = () => setModalVisible(!modalVisible);
@@ -72,6 +75,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
                 selectedValue={selectedValue}
                 onValueChange={onValueChange}
               >
+                <Picker.Item label={"Please Select"} value={""} />
                 {items.map((item) => (
                   <Picker.Item
                     key={item.value}
@@ -84,6 +88,11 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
           </TouchableOpacity>
         </Modal>
       )}
+      {error ? (
+        <PrimaryText style={[styles.errorLabel, { color: danger }]}>
+          {error}
+        </PrimaryText>
+      ) : null}
     </View>
   );
 };
@@ -116,6 +125,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: "80%",
     padding: 20,
+  },
+  errorLabel: {
+    marginTop: 4,
+    fontSize: 14,
   },
 });
 

@@ -1,5 +1,6 @@
 export const LightTheme = {
   background: "#F9FAFB",
+  backgroundSecondary: "#ffffff",
   text: "#111827",
   primary: "#4CAF50",
   primaryText: "#FFFFFF",
@@ -9,6 +10,7 @@ export const LightTheme = {
 
 export const DarkTheme = {
   background: "#181A1B",
+  backgroundSecondary: "#222222",
   text: "#E5E7EB",
   primary: "#66BB6A",
   primaryText: "#1B1F23",

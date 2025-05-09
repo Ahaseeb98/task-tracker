@@ -33,13 +33,14 @@ export class TasksController {
     @Body() body: CreateTaskDto,
     @Req() req: AuthRequest,
   ) {
+    const data = body;
     if (file) {
-      body.picture = `/uploads/${file.filename}`;
+      data.picture = `/uploads/${file.filename}`;
     }
+    console.log(req.user, 'req.user');
+    const createdBy = req.user._id;
 
-    const createdBy = req?.user?.id || '';
-    body.createdBy = createdBy;
-    return this.tasksService.create(body);
+    return this.tasksService.create({ ...data, createdBy });
   }
 
   @Get()
@@ -63,7 +64,7 @@ export class TasksController {
   ) {
     const updated = await this.tasksService.update(
       id,
-      req.user.id,
+      req.user._id,
       updateTaskDto,
     );
     if (!updated) throw new NotFoundException('Task not found or unauthorized');
@@ -72,7 +73,7 @@ export class TasksController {
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Req() req: AuthRequest) {
-    const deleted = await this.tasksService.remove(id, req.user.id);
+    const deleted = await this.tasksService.remove(id, req.user._id);
     if (!deleted) throw new NotFoundException('Task not found or unauthorized');
     return { message: 'Task deleted' };
   }
@@ -85,7 +86,7 @@ export class TasksController {
   ) {
     const updated = await this.tasksService.updateStatus(
       id,
-      req.user.id,
+      req.user._id,
       updateStatusDto,
     );
     if (!updated)

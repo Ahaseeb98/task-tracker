@@ -1,11 +1,15 @@
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
+import PrimaryBackground from "../../Components/Backgrounds/PrimaryBackground";
+import PrimaryText from "../../Components/Texts/PrimaryText";
 
 const Task = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.h1}>Task</Text>
-    </View>
+    <PrimaryBackground style={styles.container}>
+      <PrimaryText weight="bold" style={styles.h1}>
+        Task
+      </PrimaryText>
+    </PrimaryBackground>
   );
 };
 

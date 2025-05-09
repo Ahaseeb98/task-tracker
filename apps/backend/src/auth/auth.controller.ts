@@ -24,11 +24,12 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    const body = createUserDto;
     if (file) {
-      createUserDto.avatar = `/uploads/${file.filename}`;
+      body.avatar = `/uploads/${file.filename}`;
     }
 
-    return this.authService.register(createUserDto);
+    return this.authService.register(body);
   }
 
   @Post('login')
@@ -45,6 +46,6 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   profile(@Req() req: AuthRequest) {
     const user = req.user;
-    return this.authService.getProfile(user.id);
+    return this.authService.getProfile(user._id);
   }
 }

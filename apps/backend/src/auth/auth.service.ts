@@ -1,5 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { USER_TYPE } from './../../../../packages/Types/USERS';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, ValidateUserDto } from './dtos/create-users.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,21 +16,29 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
-  private users: USER_TYPE[] = [];
 
   // Register user
   async register(body: CreateUserDto) {
     const { email, password, ...rest } = body;
+
+    // 1. Check for existing user with this email
+    const existingUser = await this.userModel.findOne({ email });
+    if (existingUser) {
+      throw new BadRequestException('Email already in use');
+    }
+
+    // 2. Convert referredBy if present
     if (body.referredBy) {
       body.referredBy = new Types.ObjectId(
         body.referredBy,
       ) as unknown as string;
     }
+
+    // 3. Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
     const createdUser = new this.userModel({
       email,
       password: hashedPassword,
-
       ...rest,
     });
 
@@ -57,7 +68,7 @@ export class AuthService {
 
   private generateToken(user: UserDocument) {
     const payload = {
-      id: user._id,
+      _id: user._id,
       email: user.email,
       role: user.role,
       name: user.name,

@@ -5,6 +5,7 @@ import { ThemeProvider } from "./src/Theme/ThemeProvider";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./src/Redux";
 import { Provider } from "react-redux";
+import Toast from "react-native-toast-message";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           </Provider>
         </PersistGate>
       </View>
+      <Toast />
     </SafeAreaProvider>
   );
 }

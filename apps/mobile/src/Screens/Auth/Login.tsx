@@ -12,6 +12,7 @@ import { validateEmail } from "../../Utils/validate";
 import { login } from "../../Redux/authSlice";
 import { loginRequest } from "../../Api/authService";
 import { useDispatch } from "react-redux";
+import Toast from "react-native-toast-message";
 
 const LoginScreen = () => {
   const { primary, text } = useTheme();
@@ -50,6 +51,11 @@ const LoginScreen = () => {
     try {
       const data = await loginRequest(email, password);
       dispatch(login(data));
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Login Successful!",
+      });
     } catch (error) {
       console.log(error);
     } finally {

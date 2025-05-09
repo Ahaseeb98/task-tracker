@@ -50,12 +50,12 @@ export class TasksService {
   async findAll(user: USER_TYPE) {
     if (user.role === 'employee') {
       return this.taskModel
-        .find({ assignee: user.id })
+        .find({ assignee: new Types.ObjectId(user._id) })
         .populate('createdBy', 'name email')
         .exec();
     } else if (user.role === 'employer') {
       return this.taskModel
-        .find({ createdBy: user.id })
+        .find({ createdBy: new Types.ObjectId(user._id) })
         .populate('assignee', 'name email')
         .exec();
     } else {

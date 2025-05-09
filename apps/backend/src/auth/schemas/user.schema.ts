@@ -18,7 +18,7 @@ export class User {
   role: 'employee' | 'employer';
 
   @Prop()
-  profilePicture?: string;
+  avatar?: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
   referredBy: Types.ObjectId;

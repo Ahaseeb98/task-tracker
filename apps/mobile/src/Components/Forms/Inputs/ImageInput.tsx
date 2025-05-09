@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import {
-  View,
-  Button,
-  Image,
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-  Text,
-} from "react-native";
+import { View, Image, StyleSheet, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import PrimaryButton from "../../Buttons/PrimaryButton";
 import { useTheme } from "../../../Theme/ThemeProvider";
 
+export type AvatarFile = {
+  uri: string;
+  fileName: string;
+  mimeType: string;
+};
 type ImageInputProps = {
-  onImagePicked: (uri: string) => void;
+  onImagePicked: (uri: AvatarFile) => void;
   label?: string;
   style?: any;
   imageStyle?: any;
@@ -21,7 +18,6 @@ type ImageInputProps = {
 
 const ImageInput: React.FC<ImageInputProps> = ({
   onImagePicked,
-  label = "Pick an image",
   style,
   imageStyle,
 }) => {
@@ -47,7 +43,7 @@ const ImageInput: React.FC<ImageInputProps> = ({
     if (!result.canceled && result.assets.length > 0) {
       const selectedAsset = result.assets[0];
       setImageUri(selectedAsset.uri);
-      onImagePicked(selectedAsset.uri);
+      onImagePicked(selectedAsset as AvatarFile);
     }
   };
 

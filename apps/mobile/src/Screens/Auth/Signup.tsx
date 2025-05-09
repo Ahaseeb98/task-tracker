@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, Alert, Platform } from "react-native";
 import { useTheme } from "../../Theme/ThemeProvider";
 import PrimaryInput from "../../Components/Forms/Inputs/PrimaryInput";
@@ -10,11 +10,27 @@ import { LOGIN_PATH } from "../../Navigation/Paths";
 import { useNavigation } from "@react-navigation/native";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
 import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
-import ImageInput from "../../Components/Forms/Inputs/ImageInput";
+import ImageInput, {
+  AvatarFile,
+} from "../../Components/Forms/Inputs/ImageInput";
+import { registerRequest } from "../../Api/authService";
+import { login } from "../../Redux/authSlice";
+import { useDispatch } from "react-redux";
+import Toast from "react-native-toast-message";
+import { getUsers } from "../../Api/userService";
+import { addUsers } from "../../Redux/Reducers/authSlice";
+import { useAppSelector } from "../../Redux/reduxHook";
+
+const validateEmail = (email: string) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
 
 const SignupScreen = () => {
   const { text, primary } = useTheme();
   const { navigate } = useNavigation();
+  const dispatch = useDispatch();
+  const users = useAppSelector((state) => state.auth.users);
 
   const [form, setForm] = useState({
     name: "",
@@ -22,27 +38,112 @@ const SignupScreen = () => {
     password: "",
     address: "",
     referredBy: "",
-    avatar: "",
-    role: "", // default
+    role: "",
   });
 
-  const handleChange = (field: keyof typeof form, value: string) => {
+  const [avatar, setAvatar] = useState<AvatarFile | null>(null);
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [addressError, setAddressError] = useState("");
+  const [roleError, setRoleError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (field: keyof typeof form, value: string | File) => {
     setForm({ ...form, [field]: value });
   };
 
-  const handleSubmit = () => {
-    // validate and send to backend
-    console.log("Submitting form:", form);
-    if (!form.name || !form.email || !form.password) {
-      Alert.alert("Validation Error", "Please fill all required fields.");
-      return;
+  const handleSubmit = async () => {
+    let valid = true;
+
+    setNameError("");
+    setEmailError("");
+    setPasswordError("");
+    setAddressError("");
+    setRoleError("");
+
+    if (!form.name.trim()) {
+      setNameError("Name is required.");
+      valid = false;
     }
 
-    // Replace this with actual API call
-    console.log("Submitting form:", form);
+    if (!validateEmail(form.email)) {
+      setEmailError("Please enter a valid email.");
+      valid = false;
+    }
+
+    if (!form.password.trim()) {
+      setPasswordError("Password is required.");
+      valid = false;
+    } else if (form.password.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      valid = false;
+    }
+
+    if (!form.role.trim()) {
+      setRoleError("Please select a role.");
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Create FormData
+    const data = new FormData();
+    data.append("name", form.name);
+    data.append("email", form.email);
+    data.append("password", form.password);
+    form.address && data.append("address", form.address);
+    form.referredBy && data.append("referredBy", form.referredBy);
+    data.append("role", form.role);
+
+    // Append avatar if it exists
+    if (avatar) {
+      data.append("file", {
+        uri: avatar.uri,
+        name: avatar.fileName,
+        type: avatar.mimeType,
+      } as any);
+    }
+
+    // Simulate the request (replace with actual API call)
+    setLoading(true);
+    try {
+      console.log(data);
+      const result = await registerRequest(data);
+      dispatch(login(result));
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Signup Successful!",
+      });
+      // Handle success (Navigate or show success message)
+    } catch (error) {
+      console.log("Signup error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const userData = await getUsers();
+
+      dispatch(addUsers(userData));
+    } catch (error) {}
+  };
+
   const inputColors = { color: text, borderColor: text };
 
+  const selectableUsers = users?.map((user) => ({
+    label: user.name || "",
+    value: user._id,
+  }));
+
+  console.log(form);
   return (
     <PrimaryBackground style={styles.container}>
       <ScrollView
@@ -52,42 +153,63 @@ const SignupScreen = () => {
         <PrimaryText weight="bold" style={{ color: text, fontSize: 24 }}>
           Signup
         </PrimaryText>
+
         <PrimaryInput
           style={[styles.input, inputColors]}
           placeholder="Name"
           value={form.name}
-          onChangeText={(text: string) => handleChange("name", text)}
+          onChangeText={(text) => handleChange("name", text)}
+          error={nameError}
         />
+
         <PrimaryInput
           style={[styles.input, inputColors]}
           placeholder="Email"
           value={form.email}
-          onChangeText={(text: string) => handleChange("email", text)}
+          onChangeText={(text) => handleChange("email", text)}
           keyboardType="email-address"
           autoCapitalize="none"
+          error={emailError}
         />
+
         <PrimaryInput
           style={[styles.input, inputColors]}
           placeholder="Password"
           value={form.password}
-          onChangeText={(text: string) => handleChange("password", text)}
+          onChangeText={(text) => handleChange("password", text)}
           secureTextEntry
+          error={passwordError}
         />
+
         <PrimaryInput
           style={[styles.input, inputColors]}
           placeholder="Address"
           value={form.address}
-          onChangeText={(text: string) => handleChange("address", text)}
+          onChangeText={(text) => handleChange("address", text)}
+          error={addressError}
         />
-        <PrimaryInput
-          style={[styles.input, inputColors]}
-          placeholder="Referred By (optional)"
-          value={form.referredBy}
-          onChangeText={(text: string) => handleChange("referredBy", text)}
-        />
+
+        {Platform.OS === "ios" ? (
+          <PrimarySelectIos
+            style={{ ...styles.inputIos, ...inputColors }}
+            placeholder="Referred By (optional)"
+            selectedValue={form.referredBy}
+            items={selectableUsers}
+            onValueChange={(value: string) => handleChange("referredBy", value)}
+          />
+        ) : (
+          <PrimarySelectAndroid
+            style={{ ...styles.input, ...inputColors }}
+            placeholder="Referred By (optional)"
+            selectedValue={form.referredBy}
+            items={selectableUsers}
+            onValueChange={(value: string) => handleChange("referredBy", value)}
+          />
+        )}
+
         <ImageInput
           style={[styles.inputIos, inputColors]}
-          onImagePicked={(text: string) => handleChange("avatar", text)}
+          onImagePicked={(file: AvatarFile) => setAvatar(file)}
         />
 
         {Platform.OS === "ios" ? (
@@ -99,7 +221,8 @@ const SignupScreen = () => {
               { label: "Employee", value: "employee" },
               { label: "Employer", value: "employer" },
             ]}
-            onValueChange={(itemValue: any) => handleChange("role", itemValue)}
+            onValueChange={(value: string) => handleChange("role", value)}
+            error={roleError}
           />
         ) : (
           <PrimarySelectAndroid
@@ -110,7 +233,8 @@ const SignupScreen = () => {
               { label: "Employee", value: "employee" },
               { label: "Employer", value: "employer" },
             ]}
-            onValueChange={(itemValue: any) => handleChange("role", itemValue)}
+            onValueChange={(value: string) => handleChange("role", value)}
+            error={roleError}
           />
         )}
 
@@ -118,18 +242,15 @@ const SignupScreen = () => {
           title="Sign Up"
           onPress={handleSubmit}
           style={styles.input}
+          loading={loading}
         />
+
         <View style={styles.link}>
           <PrimaryText>
             Already have an account?{" "}
             <TouchableText
               onPress={() => navigate(LOGIN_PATH as never)}
-              style={[
-                styles.linkText,
-                {
-                  color: primary,
-                },
-              ]}
+              style={[styles.linkText, { color: primary }]}
               weight="bold"
             >
               Sign in

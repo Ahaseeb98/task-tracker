@@ -1,5 +1,5 @@
 export interface USER_TYPE {
-  id: string;
+  _id: string;
   name?: string;
   email: string;
   password: string;
