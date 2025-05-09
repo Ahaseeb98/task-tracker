@@ -62,8 +62,12 @@ export class AuthService {
     return this.userModel.findById(userId).select('-password');
   }
 
-  async getUsers() {
-    return this.userModel.find().select('-password');
+  async getUsers(userId?: string) {
+    if (userId) {
+      return this.userModel.find({ _id: { $ne: userId } }).select('-password');
+    } else {
+      return this.userModel.find().select('-password');
+    }
   }
 
   private generateToken(user: UserDocument) {

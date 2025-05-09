@@ -38,8 +38,9 @@ export class AuthController {
   }
 
   @Get('users')
-  users() {
-    return this.authService.getUsers();
+  users(@Req() req: AuthRequest) {
+    const user = req.user;
+    return this.authService.getUsers(user?._id);
   }
 
   @Get('profile')

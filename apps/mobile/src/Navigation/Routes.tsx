@@ -1,9 +1,16 @@
 import { FC } from "react";
-import { CREATE_TASK_PATH, HOME_PATH, LOGIN_PATH, SIGNUP_PATH } from "./Paths";
+import {
+  CREATE_TASK_PATH,
+  HOME_PATH,
+  LOGIN_PATH,
+  SIGNUP_PATH,
+  TASK_PATH,
+} from "./Paths";
 import Login from "../Screens/Auth/Login";
 import Signup from "../Screens/Auth/Signup";
 import Home from "../Screens/Main/Home";
 import CreateTask from "../Screens/Main/CreateTask";
+import Task from "../Screens/Main/Task";
 export interface ROUTES_TYPE {
   path: string;
   label: string;
@@ -34,5 +41,10 @@ export const MAIN_ROUTES: ROUTES_TYPE[] = [
     path: CREATE_TASK_PATH,
     label: "Create Task",
     Component: CreateTask,
+  },
+  {
+    path: TASK_PATH,
+    label: "Task",
+    Component: Task,
   },
 ];

@@ -1,18 +1,30 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTheme } from "../../Theme/ThemeProvider";
 import { TASK_TYPE } from "../../../../../packages/Types/TASKS";
 import { API_BASE_URL } from "../../Constants/API_ROUTES";
+import { useNavigation } from "@react-navigation/native";
+import { TASK_PATH } from "../../Navigation/Paths";
 
 type TaskCardProps = {
   data: TASK_TYPE;
 };
 
 const TaskCard: React.FC<TaskCardProps> = ({ data }) => {
+  const { navigate } = useNavigation();
   const { text, primary, primaryText, backgroundSecondary } = useTheme();
 
   return (
-    <View style={[styles.card, { backgroundColor: backgroundSecondary }]}>
+    <TouchableOpacity
+      onPress={() =>
+        navigate(
+          // @ts-expect-error
+          TASK_PATH as never,
+          { id: data?._id }
+        )
+      }
+      style={[styles.card, { backgroundColor: backgroundSecondary }]}
+    >
       {data.picture && (
         <Image
           source={{ uri: API_BASE_URL + data.picture }}
@@ -53,7 +65,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ data }) => {
           )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
