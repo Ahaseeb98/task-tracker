@@ -63,8 +63,15 @@ export class TasksService {
     }
   }
 
-  async remove(id: string, userId: string): Promise<boolean> {
-    const task = await this.taskModel.findOne({ _id: id, createdBy: userId });
+  async remove(id: string, _userId: string): Promise<boolean> {
+    const task = await this.taskModel
+      .findOne({
+        _id: new Types.ObjectId(id),
+      })
+      .populate('assignee')
+      .exec();
+
+    console.log(task, 'TASk');
 
     if (!task) return false;
 

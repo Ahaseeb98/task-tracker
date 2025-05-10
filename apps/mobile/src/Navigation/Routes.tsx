@@ -3,6 +3,7 @@ import {
   CREATE_TASK_PATH,
   HOME_PATH,
   LOGIN_PATH,
+  PROFILE_PATH,
   SIGNUP_PATH,
   TASK_PATH,
 } from "./Paths";
@@ -11,6 +12,7 @@ import Signup from "../Screens/Auth/Signup";
 import Home from "../Screens/Main/Home";
 import CreateTask from "../Screens/Main/CreateTask";
 import Task from "../Screens/Main/Task";
+import Profile from "../Screens/Main/Profile";
 export interface ROUTES_TYPE {
   path: string;
   label: string;
@@ -46,5 +48,10 @@ export const MAIN_ROUTES: ROUTES_TYPE[] = [
     path: TASK_PATH,
     label: "Task",
     Component: Task,
+  },
+  {
+    path: PROFILE_PATH,
+    label: "Profile",
+    Component: Profile,
   },
 ];

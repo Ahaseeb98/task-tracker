@@ -20,6 +20,7 @@ const ImageInput: React.FC<ImageInputProps> = ({
   onImagePicked,
   style,
   imageStyle,
+  label = "Select Profile Image",
 }) => {
   const { background, text } = useTheme();
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -50,12 +51,12 @@ const ImageInput: React.FC<ImageInputProps> = ({
   return (
     <View style={[styles.container, style]}>
       <PrimaryButton
-        title="Select Profile Image"
+        title={label}
         style={{
           ...styles.button,
           ...{ backgroundColor: background, borderColor: text },
         }}
-        textStyle={{ ...{ color: text }, ...styles.btnText }}
+        textStyle={{ color: text, ...styles.btnText }}
         onPress={handlePickImage}
       />
 

@@ -14,8 +14,12 @@ export class Task {
   @Prop()
   picture: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
-  assignee: Types.ObjectId;
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+    default: null,
+  })
+  assignee: Types.ObjectId | null;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;

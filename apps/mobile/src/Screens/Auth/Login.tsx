@@ -9,10 +9,10 @@ import TouchableText from "../../Components/Texts/TouchableText";
 import { useNavigation } from "@react-navigation/native";
 import { SIGNUP_PATH } from "../../Navigation/Paths";
 import { validateEmail } from "../../Utils/validate";
-import { login } from "../../Redux/authSlice";
 import { loginRequest } from "../../Api/authService";
 import { useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
+import { login } from "../../Redux/Reducers/authSlice";
 
 const LoginScreen = () => {
   const { primary, text } = useTheme();

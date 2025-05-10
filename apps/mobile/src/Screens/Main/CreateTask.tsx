@@ -24,6 +24,7 @@ import { addUsers } from "../../Redux/Reducers/authSlice";
 import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
 import { useAppSelector } from "../../Redux/reduxHook";
+import PrimaryHeader from "../../Components/Headers/PrimaryHeader";
 
 const CreateTask = () => {
   const users = useAppSelector((state) => state.auth.users);
@@ -135,9 +136,7 @@ const CreateTask = () => {
 
   return (
     <PrimaryBackground style={styles.container}>
-      <PrimaryText weight="bold" style={styles.h1}>
-        Create Task
-      </PrimaryText>
+      <PrimaryHeader title={"Create Task"} />
 
       <View style={styles.form}>
         <PrimaryInput
@@ -156,14 +155,15 @@ const CreateTask = () => {
         />
 
         <ImageInput
+          label="Upload Image"
           style={styles.input}
           onImagePicked={(file: AvatarFile) => setImage(file)}
         />
 
         {Platform.OS === "ios" ? (
           <PrimarySelectIos
-            style={{ ...styles.input }}
-            placeholder="Role (employee/employer)"
+            style={styles.input}
+            placeholder="Assignee"
             selectedValue={form.assignee}
             items={selectableUsers}
             onValueChange={(value: string) => handleChange("assignee", value)}
@@ -171,8 +171,8 @@ const CreateTask = () => {
           />
         ) : (
           <PrimarySelectAndroid
-            style={{ ...styles.input }}
-            placeholder="Role (employee/employer)"
+            style={styles.input}
+            placeholder="Assignee"
             selectedValue={form.assignee}
             items={selectableUsers}
             onValueChange={(value: string) => handleChange("assignee", value)}
@@ -205,13 +205,14 @@ export default CreateTask;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   h1: {
     fontSize: 24,
     marginBottom: 16,
   },
-  form: {},
+  form: {
+    padding: 16,
+  },
   input: {
     borderRadius: 8,
     marginVertical: 10,

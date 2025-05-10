@@ -4,6 +4,7 @@ export interface USER_TYPE {
   email: string;
   password: string;
   address: string;
+  avatar: string;
   referredBy: string;
   role: string;
   createdAt: Date;

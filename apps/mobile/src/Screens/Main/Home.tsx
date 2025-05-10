@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { addTasks } from "../../Redux/Reducers/taskSlice";
 import { useAppSelector } from "../../Redux/reduxHook";
 import TaskCard from "../../Components/Cards/TaskCard";
+import PrimaryHeader from "../../Components/Headers/PrimaryHeader";
 
 const Home = () => {
   const { navigate } = useNavigation();
@@ -30,13 +31,14 @@ const Home = () => {
   };
   return (
     <PrimaryBackground style={styles.container}>
-      <PrimaryText weight="bold" style={styles.h1}>
-        {user?.role === "employer" ? "Dashboard" : "Assigned Tasks"}
-      </PrimaryText>
+      <PrimaryHeader
+        title={user?.role === "employer" ? "Dashboard" : "Assigned Tasks"}
+      />
       <FlatList
         data={tasks}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => <TaskCard data={item} />}
+        contentContainerStyle={styles.list}
       />
       {user?.role === "employer" && (
         <FABButton onPress={() => navigate(CREATE_TASK_PATH as never)} />
@@ -51,8 +53,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  h1: {
-    fontSize: 24,
-    fontWeight: "bold",
+  list: {
+    padding: 12,
   },
 });

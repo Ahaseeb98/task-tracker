@@ -6,3 +6,4 @@ export const SIGNUP_PATH = "Signup";
 export const HOME_PATH = "Home";
 export const TASK_PATH = "Task";
 export const CREATE_TASK_PATH = "CreateTask";
+export const PROFILE_PATH = "Profile";

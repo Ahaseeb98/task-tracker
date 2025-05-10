@@ -14,11 +14,10 @@ import ImageInput, {
   AvatarFile,
 } from "../../Components/Forms/Inputs/ImageInput";
 import { registerRequest } from "../../Api/authService";
-import { login } from "../../Redux/authSlice";
 import { useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
 import { getUsers } from "../../Api/userService";
-import { addUsers } from "../../Redux/Reducers/authSlice";
+import { addUsers, login } from "../../Redux/Reducers/authSlice";
 import { useAppSelector } from "../../Redux/reduxHook";
 
 const validateEmail = (email: string) => {
@@ -137,7 +136,7 @@ const SignupScreen = () => {
   };
 
   const inputColors = { color: text, borderColor: text };
-
+  const inputStyles = [styles.input, inputColors];
   const selectableUsers = users?.map((user) => ({
     label: user.name || "",
     value: user._id,
@@ -155,7 +154,7 @@ const SignupScreen = () => {
         </PrimaryText>
 
         <PrimaryInput
-          style={[styles.input, inputColors]}
+          style={inputStyles}
           placeholder="Name"
           value={form.name}
           onChangeText={(text) => handleChange("name", text)}
@@ -163,7 +162,7 @@ const SignupScreen = () => {
         />
 
         <PrimaryInput
-          style={[styles.input, inputColors]}
+          style={inputStyles}
           placeholder="Email"
           value={form.email}
           onChangeText={(text) => handleChange("email", text)}
@@ -173,7 +172,7 @@ const SignupScreen = () => {
         />
 
         <PrimaryInput
-          style={[styles.input, inputColors]}
+          style={inputStyles}
           placeholder="Password"
           value={form.password}
           onChangeText={(text) => handleChange("password", text)}
@@ -182,7 +181,7 @@ const SignupScreen = () => {
         />
 
         <PrimaryInput
-          style={[styles.input, inputColors]}
+          style={inputStyles}
           placeholder="Address"
           value={form.address}
           onChangeText={(text) => handleChange("address", text)}
@@ -208,7 +207,7 @@ const SignupScreen = () => {
         )}
 
         <ImageInput
-          style={[styles.inputIos, inputColors]}
+          style={inputStyles}
           onImagePicked={(file: AvatarFile) => setAvatar(file)}
         />
 
@@ -271,6 +270,7 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     justifyContent: "center",
+    padding: 20,
   },
   input: {
     borderRadius: 8,
