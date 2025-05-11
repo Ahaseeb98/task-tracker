@@ -57,16 +57,19 @@ export class TasksController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileUploadInterceptor)
   async update(
+    @UploadedFile() file: Express.Multer.File,
     @Param('id') id: string,
-    @Body() updateTaskDto: UpdateTaskDto,
+    @Body() body: UpdateTaskDto,
     @Req() req: AuthRequest,
   ) {
-    const updated = await this.tasksService.update(
-      id,
-      req.user._id,
-      updateTaskDto,
-    );
+    console.log('BODY', body, file, id);
+    const data = body;
+    if (file) {
+      data.picture = `/uploads/${file.filename}`;
+    }
+    const updated = await this.tasksService.update(id, req.user._id, data);
     if (!updated) throw new NotFoundException('Task not found or unauthorized');
     return updated;
   }

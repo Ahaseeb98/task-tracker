@@ -23,7 +23,11 @@ async function bootstrap(): Promise<void> {
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

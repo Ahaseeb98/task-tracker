@@ -11,9 +11,10 @@ import ConfirmationModal from "../../Components/Modals/ConfimationModal";
 import { deleteTask } from "../../Api/taskService";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
+import { CREATE_TASK_PATH } from "../../Navigation/Paths";
 
 const Task: React.FC = ({ route }: any) => {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const { backgroundSecondary, danger } = useTheme();
   const taskId = route.params.id;
   const task = useAppSelector((state) =>
@@ -105,7 +106,13 @@ const Task: React.FC = ({ route }: any) => {
             <PrimaryButton
               style={styles.btn}
               title="Edit"
-              onPress={handleEdit}
+              onPress={() =>
+                navigate(
+                  // @ts-expect-error
+                  CREATE_TASK_PATH,
+                  { id: taskId }
+                )
+              }
             />
             <PrimaryButton
               style={{ ...styles.btn, backgroundColor: danger }}

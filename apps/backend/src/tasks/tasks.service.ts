@@ -32,19 +32,18 @@ export class TasksService {
   }
 
   async update(taskId: string, userId: string, dto: UpdateTaskDto) {
-    const task = await this.taskModel.findById(taskId);
+    const task = await this.findOne(taskId);
 
-    if (!task) return null;
+    if (!task) {
+      // Could mean not found, not creator, or already assigned
+      return null;
+    }
+    console.log(dto, 'dto');
+    const updatedTask = await this.taskModel
+      .findOneAndUpdate({ _id: taskId }, { $set: dto }, { new: true })
+      .populate('assignee', 'name email');
 
-    // Ensure the user is the creator
-    if (String(task.createdBy) !== userId) return null;
-
-    // Prevent updates if the task has already been assigned
-    if (task.assignee)
-      throw new ForbiddenException('Cannot edit assigned task');
-
-    Object.assign(task, dto);
-    return task.save();
+    return updatedTask;
   }
 
   async findAll(user: USER_TYPE) {
@@ -64,14 +63,13 @@ export class TasksService {
   }
 
   async remove(id: string, _userId: string): Promise<boolean> {
+    console.log(_userId);
     const task = await this.taskModel
       .findOne({
         _id: new Types.ObjectId(id),
       })
       .populate('assignee')
       .exec();
-
-    console.log(task, 'TASk');
 
     if (!task) return false;
 

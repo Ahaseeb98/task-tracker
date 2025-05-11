@@ -24,7 +24,7 @@ export class Task {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;
 
-  @Prop({ required: true, default: 'Pending' })
+  @Prop({ default: 'Pending' })
   status: 'Pending' | 'In Progress' | 'Completed';
 
   @Prop({ required: true })

@@ -19,17 +19,16 @@ export const createTask = async (formData: FormData) => {
   return response.data;
 };
 
-export const updateTask = async (
-  id: string,
-  taskData: Partial<{
-    title: string;
-    description: string;
-    status: "pending" | "in-progress" | "completed";
-  }>
-) => {
-  const response = await axiosInstance.put(
+export const updateTask = async (id: string, formData: FormData) => {
+  console.log(id);
+  const response = await axiosInstance.patch(
     TASK_URL?.replace(":id", id),
-    taskData
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
   return response.data;
 };

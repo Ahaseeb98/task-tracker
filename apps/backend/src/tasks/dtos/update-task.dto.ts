@@ -1,32 +1,28 @@
-import {
-  IsOptional,
-  IsString,
-  IsMongoId,
-  IsIn,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsOptional, IsString, IsMongoId, IsIn } from 'class-validator';
 
 export class UpdateTaskDto {
-  @IsString()
-  @IsNotEmpty()
-  title: string;
+  @IsString({ message: 'Title must be a string' })
+  @IsOptional()
+  title?: string;
 
-  @IsString()
+  @IsString({ message: 'Description must be a string' })
   @IsOptional()
   description?: string;
 
   @IsOptional()
   picture?: string;
 
-  @IsMongoId()
+  @IsMongoId({ message: 'Assignee must be a valid user ID' })
   @IsOptional()
-  assignee: string;
+  assignee?: string;
 
-  @IsIn(['Pending', 'In Progress', 'Completed'])
+  @IsIn(['Pending', 'In Progress', 'Completed'], {
+    message: 'Status must be one of: Pending, In Progress, Completed',
+  })
   @IsOptional()
   status?: 'Pending' | 'In Progress' | 'Completed';
 
-  @IsString()
-  @IsNotEmpty()
-  rewardPrice: string;
+  @IsString({ message: 'Reward price must be a string' })
+  @IsOptional()
+  rewardPrice?: string;
 }

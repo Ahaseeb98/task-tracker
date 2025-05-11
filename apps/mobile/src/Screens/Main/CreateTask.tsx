@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Button,
-  Alert,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import PrimaryBackground from "../../Components/Backgrounds/PrimaryBackground";
-import PrimaryText from "../../Components/Texts/PrimaryText";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton"; // Same here
 import PrimaryInput from "../../Components/Forms/Inputs/PrimaryInput";
 import ImageInput, {
   AvatarFile,
 } from "../../Components/Forms/Inputs/ImageInput";
-import { createTask } from "../../Api/taskService";
+import { createTask, updateTask } from "../../Api/taskService";
 import { useDispatch } from "react-redux";
-import { addNewTask } from "../../Redux/Reducers/taskSlice";
+import { addNewTask, editTask } from "../../Redux/Reducers/taskSlice";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { getUsers } from "../../Api/userService";
@@ -26,11 +18,16 @@ import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.a
 import { useAppSelector } from "../../Redux/reduxHook";
 import PrimaryHeader from "../../Components/Headers/PrimaryHeader";
 
-const CreateTask = () => {
+const CreateTask = ({ route }: any) => {
+  const taskId = route.params.id;
+
   const users = useAppSelector((state) => state.auth.users);
+  const task = useAppSelector((state) =>
+    state.task?.tasks.find((task) => task?._id === taskId)
+  );
   const { goBack } = useNavigation();
   const dispatch = useDispatch();
-  const [image, setImage] = useState<AvatarFile | null>(null);
+  const [image, setImage] = useState<AvatarFile | string | null>(null);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -50,7 +47,7 @@ const CreateTask = () => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async () => {
+  const handleValidation = () => {
     let valid = true;
 
     setTitleError("");
@@ -77,30 +74,31 @@ const CreateTask = () => {
       valid = false;
     }
 
-    if (!valid) return;
+    return valid;
+  };
+
+  const handleSubmit = async () => {
+    const isValid = handleValidation();
+
+    if (!isValid) return;
 
     const formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
     form.assignee && formData.append("assignee", form.assignee);
     formData.append("rewardPrice", form.rewardPrice);
-    console.log({
-      uri: image,
-      name: image?.fileName,
-      type: image?.mimeType,
-    });
-
-    if (image) {
+    const imageType = typeof image;
+    const uploadedImage = image as AvatarFile;
+    if (imageType !== "string" && (image as AvatarFile)) {
       formData.append("file", {
-        uri: image.uri,
-        name: image.fileName,
-        type: image.mimeType,
+        uri: uploadedImage.uri,
+        name: uploadedImage.fileName,
+        type: uploadedImage.mimeType,
       } as any);
     }
 
     setLoading(true);
     try {
-      console.log(formData);
       const result = await createTask(formData);
       dispatch(addNewTask(result));
       goBack();
@@ -117,9 +115,62 @@ const CreateTask = () => {
     }
   };
 
+  const handleEdit = async () => {
+    const isValid = handleValidation();
+
+    if (!isValid) return;
+
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    form.assignee && formData.append("assignee", form.assignee);
+    formData.append("rewardPrice", form.rewardPrice);
+    const imageType = typeof image;
+    const uploadedImage = image as AvatarFile;
+    if (imageType !== "string" && (image as AvatarFile)) {
+      formData.append("file", {
+        uri: uploadedImage.uri,
+        name: uploadedImage.fileName,
+        type: uploadedImage.mimeType,
+      } as any);
+    }
+
+    setLoading(true);
+    try {
+      const result = await updateTask(taskId, formData);
+      dispatch(editTask(result));
+      goBack();
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Task edited successfully!",
+      });
+      // Handle success (Navigate or show success message)
+    } catch (error) {
+      console.log("create tas error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    if (task && taskId) {
+      setForm({
+        title: task.title,
+        description: task.description,
+        picture: task.picture || "",
+        assignee: task?.assignee?._id || "",
+        rewardPrice: task.rewardPrice || "",
+      });
+      if (task.picture) {
+        setImage(task.picture);
+      }
+    }
+  }, taskId);
 
   const fetchUsers = async () => {
     try {
@@ -134,9 +185,11 @@ const CreateTask = () => {
     value: user._id,
   }));
 
+  const titleString = `${taskId ? "Edit" : "Create"} Task`;
+
   return (
     <PrimaryBackground style={styles.container}>
-      <PrimaryHeader title={"Create Task"} />
+      <PrimaryHeader title={titleString} />
 
       <View style={styles.form}>
         <PrimaryInput
@@ -192,8 +245,8 @@ const CreateTask = () => {
           style={styles.input}
           loading={loading}
           disabled={loading}
-          title="Create Task"
-          onPress={handleSubmit}
+          title={titleString}
+          onPress={taskId ? handleEdit : handleSubmit}
         />
       </View>
     </PrimaryBackground>
