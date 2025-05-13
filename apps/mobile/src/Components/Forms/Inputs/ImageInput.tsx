@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, StyleSheet, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import PrimaryButton from "../../Buttons/PrimaryButton";
@@ -14,6 +14,7 @@ type ImageInputProps = {
   label?: string;
   style?: any;
   imageStyle?: any;
+  value: string;
 };
 
 const ImageInput: React.FC<ImageInputProps> = ({
@@ -21,6 +22,7 @@ const ImageInput: React.FC<ImageInputProps> = ({
   style,
   imageStyle,
   label = "Select Profile Image",
+  value,
 }) => {
   const { background, text } = useTheme();
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -47,6 +49,12 @@ const ImageInput: React.FC<ImageInputProps> = ({
       onImagePicked(selectedAsset as AvatarFile);
     }
   };
+
+  useEffect(() => {
+    if (typeof value === "string") {
+      setImageUri(value);
+    }
+  }, [value]);
 
   return (
     <View style={[styles.container, style]}>

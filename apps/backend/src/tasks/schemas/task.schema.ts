@@ -19,7 +19,7 @@ export class Task {
     ref: 'User',
     default: null,
   })
-  assignee: Types.ObjectId | null;
+  assignee: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;

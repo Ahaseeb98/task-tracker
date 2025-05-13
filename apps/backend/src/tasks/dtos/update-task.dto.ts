@@ -1,4 +1,5 @@
 import { IsOptional, IsString, IsMongoId, IsIn } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class UpdateTaskDto {
   @IsString({ message: 'Title must be a string' })
@@ -14,7 +15,7 @@ export class UpdateTaskDto {
 
   @IsMongoId({ message: 'Assignee must be a valid user ID' })
   @IsOptional()
-  assignee?: string;
+  assignee?: string | Types.ObjectId;
 
   @IsIn(['Pending', 'In Progress', 'Completed'], {
     message: 'Status must be one of: Pending, In Progress, Completed',

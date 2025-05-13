@@ -17,9 +17,10 @@ import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
 import { useAppSelector } from "../../Redux/reduxHook";
 import PrimaryHeader from "../../Components/Headers/PrimaryHeader";
+import { API_BASE_URL } from "../../Constants/API_ROUTES";
 
 const CreateTask = ({ route }: any) => {
-  const taskId = route.params.id;
+  const taskId = route?.params?.id;
 
   const users = useAppSelector((state) => state.auth.users);
   const task = useAppSelector((state) =>
@@ -167,10 +168,10 @@ const CreateTask = ({ route }: any) => {
         rewardPrice: task.rewardPrice || "",
       });
       if (task.picture) {
-        setImage(task.picture);
+        setImage(API_BASE_URL + task.picture);
       }
     }
-  }, taskId);
+  }, [taskId]);
 
   const fetchUsers = async () => {
     try {
@@ -208,6 +209,7 @@ const CreateTask = ({ route }: any) => {
         />
 
         <ImageInput
+          value={image as string}
           label="Upload Image"
           style={styles.input}
           onImagePicked={(file: AvatarFile) => setImage(file)}

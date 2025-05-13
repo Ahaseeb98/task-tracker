@@ -28,7 +28,8 @@ export class TasksService {
     return this.taskModel
       .findById(id)
       .populate('assignee', 'name email')
-      .populate('createdBy', 'name email');
+      .populate('createdBy', 'name email')
+      .exec();
   }
 
   async update(taskId: string, userId: string, dto: UpdateTaskDto) {
@@ -38,10 +39,18 @@ export class TasksService {
       // Could mean not found, not creator, or already assigned
       return null;
     }
-    console.log(dto, 'dto');
+
+    const updatedDto = { ...dto };
+
+    if (dto.assignee) {
+      updatedDto.assignee = new Types.ObjectId(dto.assignee as string);
+    }
+    console.log(updatedDto, 'dto');
+
     const updatedTask = await this.taskModel
-      .findOneAndUpdate({ _id: taskId }, { $set: dto }, { new: true })
-      .populate('assignee', 'name email');
+      .findOneAndUpdate({ _id: taskId }, { $set: updatedDto }, { new: true })
+      .populate('assignee', 'name email')
+      .exec();
 
     return updatedTask;
   }
