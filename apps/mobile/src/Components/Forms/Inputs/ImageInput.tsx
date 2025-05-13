@@ -14,7 +14,7 @@ type ImageInputProps = {
   label?: string;
   style?: any;
   imageStyle?: any;
-  value: string;
+  value?: string;
 };
 
 const ImageInput: React.FC<ImageInputProps> = ({
