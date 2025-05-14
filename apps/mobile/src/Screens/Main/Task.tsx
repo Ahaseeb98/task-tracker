@@ -11,11 +11,11 @@ import ConfirmationModal from "../../Components/Modals/ConfimationModal";
 import { deleteTask } from "../../Api/taskService";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
-import { CREATE_TASK_PATH } from "../../Navigation/Paths";
+import { COMMENTS_PATH, CREATE_TASK_PATH } from "../../Navigation/Paths";
 
 const Task: React.FC = ({ route }: any) => {
   const { goBack, navigate } = useNavigation();
-  const { backgroundSecondary, danger } = useTheme();
+  const { backgroundSecondary, danger, text } = useTheme();
   const taskId = route.params.id;
   const task = useAppSelector((state) =>
     state.task?.tasks.find((task) => task?._id === taskId)
@@ -23,7 +23,7 @@ const Task: React.FC = ({ route }: any) => {
 
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const handleEdit = () => {};
+
   const handleDelete = async () => {
     try {
       setLoading(true);
@@ -42,6 +42,8 @@ const Task: React.FC = ({ route }: any) => {
       setLoading(false);
     }
   };
+
+  const labelValueStyles = [styles.text, { color: text }];
   return (
     <PrimaryBackground style={styles.container}>
       <PrimaryHeader title={"Task Details"} />
@@ -60,18 +62,22 @@ const Task: React.FC = ({ route }: any) => {
           </PrimaryText>
 
           <PrimaryText style={styles.label}>Description:</PrimaryText>
-          <PrimaryText style={styles.text}>{task?.description}</PrimaryText>
+          <PrimaryText style={labelValueStyles}>
+            {task?.description}
+          </PrimaryText>
 
           <PrimaryText style={styles.label}>Status:</PrimaryText>
-          <PrimaryText style={styles.text}>{task?.status}</PrimaryText>
+          <PrimaryText style={labelValueStyles}>{task?.status}</PrimaryText>
 
           <PrimaryText style={styles.label}>Reward Price:</PrimaryText>
-          <PrimaryText style={styles.text}>${task?.rewardPrice}</PrimaryText>
+          <PrimaryText style={labelValueStyles}>
+            ${task?.rewardPrice}
+          </PrimaryText>
 
           {task?.assignee?.name && (
             <>
               <PrimaryText style={styles.label}>Assignee:</PrimaryText>
-              <PrimaryText style={styles.text}>
+              <PrimaryText style={labelValueStyles}>
                 {task?.assignee?.name}
               </PrimaryText>
             </>
@@ -80,21 +86,21 @@ const Task: React.FC = ({ route }: any) => {
           {task?.createdBy?.name && (
             <>
               <PrimaryText style={styles.label}>Created By:</PrimaryText>
-              <PrimaryText style={styles.text}>
+              <PrimaryText style={labelValueStyles}>
                 {task?.createdBy?.name}
               </PrimaryText>
             </>
           )}
 
           <PrimaryText style={styles.label}>Created At:</PrimaryText>
-          <PrimaryText style={styles.text}>
+          <PrimaryText style={labelValueStyles}>
             {new Date(
               // @ts-expect-error
               task?.createdAt
             ).toLocaleString()}
           </PrimaryText>
           <PrimaryText style={styles.label}>Updated At:</PrimaryText>
-          <PrimaryText style={styles.text}>
+          <PrimaryText style={labelValueStyles}>
             {new Date(
               // @ts-expect-error
               task?.updatedAt
@@ -121,6 +127,14 @@ const Task: React.FC = ({ route }: any) => {
             />
           </View>
         )}
+
+        <PrimaryButton
+          title="Add Comments"
+          onPress={() =>
+            // @ts-expect-error
+            navigate(COMMENTS_PATH, { id: taskId })
+          }
+        />
       </ScrollView>
       <ConfirmationModal
         title="Delete Task"
@@ -156,7 +170,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
-    color: "#555",
   },
   image: {
     width: "100%",

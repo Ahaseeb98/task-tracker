@@ -16,7 +16,7 @@ const Navigation = () => {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.backgroundSecondary }]}
     >
       <NavigationContainer>
         <Stack.Navigator
@@ -53,7 +53,7 @@ const Navigation = () => {
       </NavigationContainer>
       <StatusBar
         style={colorScheme === "dark" ? "light" : "dark"}
-        backgroundColor={theme.background}
+        backgroundColor={theme.backgroundSecondary}
       />
     </SafeAreaView>
   );
@@ -64,6 +64,5 @@ export default Navigation;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
 });

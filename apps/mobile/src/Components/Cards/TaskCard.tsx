@@ -12,7 +12,7 @@ type TaskCardProps = {
 
 const TaskCard: React.FC<TaskCardProps> = ({ data }) => {
   const { navigate } = useNavigation();
-  const { text, primary, primaryText, backgroundSecondary } = useTheme();
+  const { text, primary, backgroundSecondary } = useTheme();
 
   return (
     <TouchableOpacity
@@ -56,7 +56,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ data }) => {
                 styles.status,
                 {
                   backgroundColor: primary,
-                  color: primaryText,
+                  color: text,
                 },
               ]}
             >

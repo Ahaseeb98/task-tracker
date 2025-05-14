@@ -1,5 +1,6 @@
 import { FC } from "react";
 import {
+  COMMENTS_PATH,
   CREATE_TASK_PATH,
   HOME_PATH,
   LOGIN_PATH,
@@ -13,6 +14,7 @@ import Home from "../Screens/Main/Home";
 import CreateTask from "../Screens/Main/CreateTask";
 import Task from "../Screens/Main/Task";
 import Profile from "../Screens/Main/Profile";
+import Comments from "../Screens/Main/Comments";
 export interface ROUTES_TYPE {
   path: string;
   label: string;
@@ -53,5 +55,10 @@ export const MAIN_ROUTES: ROUTES_TYPE[] = [
     path: PROFILE_PATH,
     label: "Profile",
     Component: Profile,
+  },
+  {
+    path: COMMENTS_PATH,
+    label: "Comments",
+    Component: Comments,
   },
 ];

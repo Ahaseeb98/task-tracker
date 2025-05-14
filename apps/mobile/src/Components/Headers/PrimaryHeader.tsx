@@ -14,13 +14,13 @@ type PrimaryHeaderProps = {
 const PrimaryHeader: React.FC<PrimaryHeaderProps> = ({ title }) => {
   const { goBack, navigate } = useNavigation();
   const canGoBack = useNavigationState((state) => state.index > 0);
-  const { background, text, primary } = useTheme();
+  const { backgroundSecondary, text, primary } = useTheme();
   const user = useAppSelector((state) => state.auth.user);
   return (
-    <View style={[styles.container, { backgroundColor: background }]}>
+    <View style={[styles.container, { backgroundColor: backgroundSecondary }]}>
       {canGoBack ? (
         <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color={text} />
+          <Ionicons name="chevron-back" size={24} style={{ color: text }} />
         </TouchableOpacity>
       ) : (
         <View style={styles.placeholder} />

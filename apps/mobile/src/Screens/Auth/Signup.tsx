@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: 8,
-    padding: 12,
+    // padding: 12,
     marginVertical: 10,
   },
   inputIos: {

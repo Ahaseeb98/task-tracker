@@ -7,3 +7,4 @@ export const HOME_PATH = "Home";
 export const TASK_PATH = "Task";
 export const CREATE_TASK_PATH = "CreateTask";
 export const PROFILE_PATH = "Profile";
+export const COMMENTS_PATH = "Comments";

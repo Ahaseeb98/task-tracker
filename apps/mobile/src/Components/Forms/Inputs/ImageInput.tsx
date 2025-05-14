@@ -24,7 +24,7 @@ const ImageInput: React.FC<ImageInputProps> = ({
   label = "Select Profile Image",
   value,
 }) => {
-  const { background, text } = useTheme();
+  const { backgroundSecondary, text } = useTheme();
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handlePickImage = async () => {
@@ -62,7 +62,7 @@ const ImageInput: React.FC<ImageInputProps> = ({
         title={label}
         style={{
           ...styles.button,
-          ...{ backgroundColor: background, borderColor: text },
+          ...{ backgroundColor: backgroundSecondary, borderColor: text },
         }}
         textStyle={{ color: text, ...styles.btnText }}
         onPress={handlePickImage}

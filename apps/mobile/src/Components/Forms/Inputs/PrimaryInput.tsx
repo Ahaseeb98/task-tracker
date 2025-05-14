@@ -21,7 +21,7 @@ const PrimaryInput: React.FC<PrimaryInputProps> = ({
   ...props
 }) => {
   const {
-    background: inputBackground,
+    backgroundSecondary: inputBackground,
     text: borderColor,
     text,
     danger, // Assuming you have a danger (red) color in your theme

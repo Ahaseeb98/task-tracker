@@ -14,4 +14,5 @@ export interface TASK_TYPE {
   createdAt: Date;
   updatedAt: Date;
   createdBy: USER_TYPE;
+  comments: { text: string; date: Date; by: string }[];
 }

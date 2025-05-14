@@ -21,7 +21,7 @@ const PrimarySelect: React.FC<PrimarySelectProps> = ({
   style,
   error,
 }) => {
-  const { text, background, danger } = useTheme();
+  const { text, backgroundSecondary, danger } = useTheme();
 
   return (
     <>
@@ -38,13 +38,13 @@ const PrimarySelect: React.FC<PrimarySelectProps> = ({
           inputIOS: {
             ...styles.input,
             color: text,
-            backgroundColor: background,
+            backgroundColor: backgroundSecondary,
             ...(style || {}),
           },
           inputAndroid: {
             ...styles.input,
             color: text,
-            backgroundColor: background,
+            backgroundColor: backgroundSecondary,
             borderColor: text,
             ...(style || {}),
           },

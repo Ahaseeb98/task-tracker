@@ -29,7 +29,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   error,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { text, background, danger } = useTheme();
+  const { text, backgroundSecondary, danger } = useTheme();
 
   // Toggle modal visibility
   const toggleModal = () => setModalVisible(!modalVisible);
@@ -38,7 +38,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
     <View style={[styles.container, style]}>
       {/* Trigger to open modal */}
       <TouchableOpacity
-        style={[styles.input, { backgroundColor: background }]}
+        style={[styles.input, { backgroundColor: backgroundSecondary }]}
         onPress={toggleModal}
       >
         <Text
