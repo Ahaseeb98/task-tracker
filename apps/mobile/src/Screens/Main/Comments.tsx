@@ -19,6 +19,7 @@ import PrimaryInput from "../../Components/Forms/Inputs/PrimaryInput";
 
 import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
+import { updateTaskStatus } from "../../Api/taskService";
 
 const statusSelectable = ["Pending", "In Progress", "Completed"].map(
   (item) => ({
@@ -27,12 +28,12 @@ const statusSelectable = ["Pending", "In Progress", "Completed"].map(
   })
 );
 const Comments = ({ route }: any) => {
-  const { taskId } = route.params;
+  const { id } = route.params;
   const { text, backgroundSecondary } = useTheme();
   const dispatch = useDispatch();
 
   const task = useAppSelector((state) =>
-    state.task?.tasks.find((t) => t?._id === taskId)
+    state.task?.tasks.find((t) => t?._id === id)
   );
 
   const taskComments = task?.comments || [];
@@ -45,15 +46,25 @@ const Comments = ({ route }: any) => {
 
   const [commentError, setCommentError] = useState("");
 
-  const handleAddComment = () => {
-    if (!form.comment.trim()) {
-      setCommentError("Comment is required");
+  const handleAddComment = async () => {
+    try {
+      if (!form.comment.trim()) {
+        setCommentError("Comment is required");
+        return;
+      }
+      console.log(id);
+      await updateTaskStatus(id, {
+        status: form.status,
+        comment: form.comment,
+      });
+
+      setForm({
+        comment: "",
+        status: form.status,
+      });
+    } catch (error) {
+      console.log(error, "add-comment");
     }
-    // dispatch(addCommentToTask({ taskId, comment }));
-    setForm({
-      comment: "",
-      status: taskStatus,
-    });
   };
 
   const handleChange = (key: string, value: string) => {
@@ -80,18 +91,18 @@ const Comments = ({ route }: any) => {
           {Platform.OS === "ios" ? (
             <PrimarySelectIos
               style={styles.input}
-              placeholder="Assignee"
+              placeholder="Status"
               selectedValue={form.status}
               items={statusSelectable}
-              onValueChange={(value: string) => handleChange("assignee", value)}
+              onValueChange={(value: string) => handleChange("status", value)}
             />
           ) : (
             <PrimarySelectAndroid
               style={styles.input}
-              placeholder="Assignee"
+              placeholder="Status"
               selectedValue={form.status}
               items={statusSelectable}
-              onValueChange={(value: string) => handleChange("assignee", value)}
+              onValueChange={(value: string) => handleChange("status", value)}
             />
           )}
           <PrimaryInput

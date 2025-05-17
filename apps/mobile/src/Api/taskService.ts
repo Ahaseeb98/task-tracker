@@ -37,3 +37,16 @@ export const deleteTask = async (id: string) => {
   const response = await axiosInstance.delete(TASK_URL?.replace(":id", id));
   return response.data;
 };
+
+export const updateTaskStatus = async (
+  id: string,
+  data: { status: string; comment?: string }
+) => {
+  console.log(`/tasks/${id}/status`);
+  const response = await axiosInstance.patch(`/tasks/${id}/status`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+};

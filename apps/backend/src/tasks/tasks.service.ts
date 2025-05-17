@@ -93,7 +93,10 @@ export class TasksService {
   }
 
   async updateStatus(taskId: string, userId: string, dto: UpdateTaskStatusDto) {
-    const task = await this.taskModel.findById(taskId);
+    console.log(dto, taskId);
+    const task = await this.taskModel.findOne({
+      _id: new Types.ObjectId(taskId),
+    });
 
     if (!task || String(task.assignee) !== userId) {
       return null; // not found or unauthorized
