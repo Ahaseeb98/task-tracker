@@ -19,7 +19,8 @@ import PrimaryInput from "../../Components/Forms/Inputs/PrimaryInput";
 
 import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
-import { updateTaskStatus } from "../../Api/taskService";
+import { updateTask, updateTaskStatus } from "../../Api/taskService";
+import { editTask } from "../../Redux/Reducers/taskSlice";
 
 const statusSelectable = ["Pending", "In Progress", "Completed"].map(
   (item) => ({
@@ -27,6 +28,11 @@ const statusSelectable = ["Pending", "In Progress", "Completed"].map(
     value: item,
   })
 );
+
+type TYPE_STATUS = {
+  label: string;
+  value: string;
+};
 const Comments = ({ route }: any) => {
   const { id } = route.params;
   const { text, backgroundSecondary } = useTheme();
@@ -52,12 +58,12 @@ const Comments = ({ route }: any) => {
         setCommentError("Comment is required");
         return;
       }
-      console.log(id);
-      await updateTaskStatus(id, {
+      const task = await updateTaskStatus(id, {
         status: form.status,
         comment: form.comment,
       });
 
+      dispatch(editTask(task));
       setForm({
         comment: "",
         status: form.status,
@@ -70,6 +76,28 @@ const Comments = ({ route }: any) => {
   const handleChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
+
+  const filterTasksByStatus = (
+    tasks: TYPE_STATUS[],
+    selectedStatus: string
+  ) => {
+    if (selectedStatus === "Pending") return tasks;
+
+    if (selectedStatus === "In Progress") {
+      return tasks.filter((task) => task.value !== "Pending");
+    }
+
+    if (selectedStatus === "Completed") {
+      return tasks.filter((task) => task.value === "Completed");
+    }
+
+    return tasks; // fallback
+  };
+
+  const filteredStatus = filterTasksByStatus(
+    statusSelectable,
+    task?.status || "Pending"
+  );
 
   return (
     <PrimaryBackground style={styles.container}>
@@ -93,7 +121,7 @@ const Comments = ({ route }: any) => {
               style={styles.input}
               placeholder="Status"
               selectedValue={form.status}
-              items={statusSelectable}
+              items={filteredStatus}
               onValueChange={(value: string) => handleChange("status", value)}
             />
           ) : (
@@ -101,7 +129,7 @@ const Comments = ({ route }: any) => {
               style={styles.input}
               placeholder="Status"
               selectedValue={form.status}
-              items={statusSelectable}
+              items={filteredStatus}
               onValueChange={(value: string) => handleChange("status", value)}
             />
           )}
@@ -130,13 +158,14 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
-    paddingBottom: 140, // space for footer
+    // paddingBottom: 140, // space for footer
+    flexGrow: 1,
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+    // position: "absolute",
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
     padding: 16,
     borderTopWidth: 1,
     borderColor: "#ddd",

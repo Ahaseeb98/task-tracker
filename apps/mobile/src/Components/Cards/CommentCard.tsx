@@ -1,25 +1,36 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import PrimaryText from "../Texts/PrimaryText";
+import { useTheme } from "../../Theme/ThemeProvider";
+import { USER_TYPE } from "../../../../../packages/Types/USERS";
 
 type CommentCardProps = {
   comment: {
     text: string;
+    status: string;
     date: Date;
-    by: string;
+    by: USER_TYPE;
   };
 };
 
 const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
+  const { text, backgroundSecondary } = useTheme();
   return (
-    <View style={styles.card}>
-      <PrimaryText style={styles.user}>{comment.by}</PrimaryText>
-      <PrimaryText style={styles.text}>{comment.text}</PrimaryText>
-      {comment.date && (
-        <PrimaryText style={styles.date}>
-          {new Date(comment.date).toLocaleString()}
+    <View style={[styles.card, { backgroundColor: backgroundSecondary }]}>
+      <PrimaryText style={styles.user}>{comment.by.name}</PrimaryText>
+      <PrimaryText style={[styles.text, { color: text }]}>
+        {comment.text}
+      </PrimaryText>
+      <View style={styles.row}>
+        <PrimaryText style={[styles.text, { color: text }]}>
+          {comment.status || "Pending"}
         </PrimaryText>
-      )}
+        {comment.date && (
+          <PrimaryText style={styles.date}>
+            {new Date(comment.date).toLocaleString()}
+          </PrimaryText>
+        )}
+      </View>
     </View>
   );
 };
@@ -43,6 +54,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#888",
     textAlign: "right",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 

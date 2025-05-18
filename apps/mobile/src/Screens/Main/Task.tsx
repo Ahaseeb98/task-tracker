@@ -129,7 +129,7 @@ const Task: React.FC = ({ route }: any) => {
         )}
 
         <PrimaryButton
-          title="Add Comments"
+          title="Comments"
           onPress={() =>
             // @ts-expect-error
             navigate(COMMENTS_PATH, { id: taskId })

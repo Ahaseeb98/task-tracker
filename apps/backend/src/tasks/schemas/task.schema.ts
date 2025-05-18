@@ -34,11 +34,13 @@ export class Task {
     {
       text: String,
       date: Date,
+      status: String,
       by: { type: Types.ObjectId, ref: 'User' },
     },
   ])
   comments?: {
     text: string;
+    status: string;
     date: Date;
     by: Types.ObjectId;
   }[];

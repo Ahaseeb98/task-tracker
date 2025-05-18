@@ -59,12 +59,20 @@ export class TasksService {
     if (user.role === 'employee') {
       return this.taskModel
         .find({ assignee: new Types.ObjectId(user._id) })
-        .populate('createdBy', 'name email')
+        .populate([
+          { path: 'createdBy', select: 'name email' },
+          { path: 'assignee', select: 'name email' },
+          { path: 'comments.by', select: 'name email' },
+        ])
         .exec();
     } else if (user.role === 'employer') {
       return this.taskModel
         .find({ createdBy: new Types.ObjectId(user._id) })
-        .populate('assignee', 'name email')
+        .populate([
+          { path: 'createdBy', select: 'name email' },
+          { path: 'assignee', select: 'name email' },
+          { path: 'comments.by', select: 'name email' },
+        ])
         .exec();
     } else {
       throw new ForbiddenException('Invalid user role');
@@ -98,7 +106,7 @@ export class TasksService {
       _id: new Types.ObjectId(taskId),
     });
 
-    if (!task || String(task.assignee) !== userId) {
+    if (!task || !userId) {
       return null; // not found or unauthorized
     }
 
@@ -108,6 +116,7 @@ export class TasksService {
       task.comments = task.comments || [];
       task.comments.push({
         text: dto.comment,
+        status: dto.status,
         date: new Date(),
         by: new Types.ObjectId(userId),
       });
