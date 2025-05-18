@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -19,8 +19,13 @@ import PrimaryInput from "../../Components/Forms/Inputs/PrimaryInput";
 
 import PrimarySelectIos from "../../Components/Forms/Selects/PrimarySelect.ios";
 import PrimarySelectAndroid from "../../Components/Forms/Selects/PrimarySelect.android";
-import { updateTask, updateTaskStatus } from "../../Api/taskService";
+import {
+  getTaskById,
+  updateTask,
+  updateTaskStatus,
+} from "../../Api/taskService";
 import { editTask } from "../../Redux/Reducers/taskSlice";
+import { useFocusEffect } from "@react-navigation/native";
 
 const statusSelectable = ["Pending", "In Progress", "Completed"].map(
   (item) => ({
@@ -37,6 +42,7 @@ const Comments = ({ route }: any) => {
   const { id } = route.params;
   const { text, backgroundSecondary } = useTheme();
   const dispatch = useDispatch();
+  const [refreshing, setRefreshing] = useState(false);
 
   const task = useAppSelector((state) =>
     state.task?.tasks.find((t) => t?._id === id)
@@ -94,6 +100,27 @@ const Comments = ({ route }: any) => {
     return tasks; // fallback
   };
 
+  const fetchTaskById = async () => {
+    try {
+      const results = await getTaskById(id);
+      dispatch(editTask(results));
+      setRefreshing(false);
+    } catch (error) {
+      console.error("Failed to fetch tasks", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTaskById();
+    }, [id])
+  );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchTaskById();
+  };
+
   const filteredStatus = filterTasksByStatus(
     statusSelectable,
     task?.status || "Pending"
@@ -112,6 +139,8 @@ const Comments = ({ route }: any) => {
           data={taskComments}
           keyExtractor={(_, i) => i.toString()}
           renderItem={({ item }) => <CommentCard comment={item} />}
+          onRefresh={onRefresh}
+          refreshing={refreshing}
         />
 
         {/* Footer input and status */}

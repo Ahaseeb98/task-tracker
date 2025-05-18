@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, Image, ScrollView } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import PrimaryBackground from "../../Components/Backgrounds/PrimaryBackground";
 import PrimaryText from "../../Components/Texts/PrimaryText";
 import { useAppDispatch, useAppSelector } from "../../Redux/reduxHook";
@@ -8,12 +15,15 @@ import PrimaryHeader from "../../Components/Headers/PrimaryHeader";
 import { useTheme } from "../../Theme/ThemeProvider";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton";
 import ConfirmationModal from "../../Components/Modals/ConfimationModal";
-import { deleteTask } from "../../Api/taskService";
+import { deleteTask, getTaskById } from "../../Api/taskService";
 import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { COMMENTS_PATH, CREATE_TASK_PATH } from "../../Navigation/Paths";
+import { editTask } from "../../Redux/Reducers/taskSlice";
+import { useDispatch } from "react-redux";
 
 const Task: React.FC = ({ route }: any) => {
+  const dispatch = useDispatch();
   const { goBack, navigate } = useNavigation();
   const { backgroundSecondary, danger, text } = useTheme();
   const taskId = route.params.id;
@@ -22,6 +32,8 @@ const Task: React.FC = ({ route }: any) => {
   );
 
   const [confirmationModal, setConfirmationModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -43,11 +55,37 @@ const Task: React.FC = ({ route }: any) => {
     }
   };
 
+  const fetchTaskById = async () => {
+    try {
+      const results = await getTaskById(taskId);
+      dispatch(editTask(results));
+      setRefreshing(false);
+    } catch (error) {
+      console.error("Failed to fetch tasks", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTaskById();
+    }, [taskId])
+  );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchTaskById();
+  };
+
   const labelValueStyles = [styles.text, { color: text }];
   return (
     <PrimaryBackground style={styles.container}>
       <PrimaryHeader title={"Task Details"} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {task?.picture && (
           <Image
             source={{ uri: API_BASE_URL + task?.picture }}

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import PrimaryBackground from "../../Components/Backgrounds/PrimaryBackground";
 import PrimaryText from "../../Components/Texts/PrimaryText";
@@ -17,18 +17,29 @@ const Home = () => {
   const dispatch = useDispatch();
   const tasks = useAppSelector((state) => state.task.tasks);
   const user = useAppSelector((state) => state.auth.user);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchTasks = async () => {
+    try {
+      const results = await getTasks();
+      dispatch(addTasks(results));
+      setRefreshing(false);
+    } catch (error) {
+      console.error("Failed to fetch tasks", error);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchTasks();
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchTasks();
     }, [])
   );
 
-  const fetchTasks = async () => {
-    try {
-      const results = await getTasks();
-      dispatch(addTasks(results));
-    } catch (error) {}
-  };
   return (
     <PrimaryBackground style={styles.container}>
       <PrimaryHeader
@@ -39,6 +50,8 @@ const Home = () => {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => <TaskCard data={item} />}
         contentContainerStyle={styles.list}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
       />
       {user?.role === "employer" && (
         <FABButton onPress={() => navigate(CREATE_TASK_PATH as never)} />
