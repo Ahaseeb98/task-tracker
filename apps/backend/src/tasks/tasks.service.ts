@@ -27,8 +27,11 @@ export class TasksService {
   async findOne(id: string) {
     return this.taskModel
       .findById(id)
-      .populate('assignee', 'name email')
-      .populate('createdBy', 'name email')
+      .populate([
+        { path: 'createdBy', select: 'name email' },
+        { path: 'assignee', select: 'name email' },
+        { path: 'comments.by', select: 'name email' },
+      ])
       .exec();
   }
 
@@ -47,12 +50,12 @@ export class TasksService {
     }
     console.log(updatedDto, 'dto');
 
-    const updatedTask = await this.taskModel
+    await this.taskModel
       .findOneAndUpdate({ _id: taskId }, { $set: updatedDto }, { new: true })
       .populate('assignee', 'name email')
       .exec();
 
-    return updatedTask;
+    return this.findOne(taskId);
   }
 
   async findAll(user: USER_TYPE) {
@@ -122,6 +125,8 @@ export class TasksService {
       });
     }
 
-    return task.save();
+    await task.save();
+
+    return this.findOne(taskId);
   }
 }

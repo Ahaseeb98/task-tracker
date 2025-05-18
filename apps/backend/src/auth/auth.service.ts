@@ -64,7 +64,9 @@ export class AuthService {
 
   async getUsers(userId?: string) {
     if (userId) {
-      return this.userModel.find({ _id: { $ne: userId } }).select('-password');
+      return this.userModel
+        .find({ _id: { $ne: new Types.ObjectId(userId) } })
+        .select('-password');
     } else {
       return this.userModel.find().select('-password');
     }
